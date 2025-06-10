@@ -9,7 +9,7 @@ long_description = '' # (this_dir / "README.md").read_text(encoding="utf-8")
 
 setuptools.setup(
     name="internal-tool",                      # how users will install it
-    version="0.1.1",
+    version="0.1.2",
     author="yashaswini",
     author_email="goyashu@gmail.com",
     description="A Python agent for discovering and processing documents from Google Drive and Notion.",
