@@ -5,7 +5,7 @@ from pathlib import Path
 
 # read long description from README.md
 this_dir = Path(__file__).parent
-long_description = (this_dir / "README.md").read_text(encoding="utf-8")
+long_description = (this_dir / "README.md").read_text(encoding="utf-8-sig")
 
 setuptools.setup(
     name="internal-tool",                      # how users will install it
@@ -15,7 +15,7 @@ setuptools.setup(
     description="A Python agent for discovering and processing documents from Google Drive and Notion.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourorg/pr-agent",
+    url="https://github.com/yashaswini2027/internal-tool",
     package_dir={"": "src"},
     packages=setuptools.find_packages(where="src"),
     python_requires=">=3.8",
