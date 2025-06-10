@@ -37,8 +37,7 @@ setuptools.setup(
         "pydantic-settings",
         "tiktoken",
         "transformers",
-        "torch",
-        "sentencepiece"
+        "torch"
     ],
     entry_points={
         "console_scripts": [
