@@ -1,0 +1,13 @@
+{
+  "document_id": "DIVAMI_008",
+  "source_system": "Notion",
+  "original_filename": "page_20aa1c4d-4ead-80bc-8808-c61a20a0ce71.txt",
+  "format": "TXT",
+  "date_created": "",
+  "last_modified": "2025-06-06T04:43:00.000Z",
+  "date_received": "2025-06-10T06:47:48.722394Z",
+  "ingested_at": "2025-06-10T07:19:51.341617Z",
+  "status": "Processed",
+  "summary": "1. The Domain Name System (DNS) is a simple way of communicating with devices on the internet, allowing you to remember website names instead of IP address numbers.\n\n2. A domain name consists of several parts: root domain, top-level domain (TLD), second level domain, and subdomain. For example, in tryhackme.com, \"tryhackme\" is the second level domain and \".com\" is the TLD.\n\n3. The TLD is the most right-hand part of the domain name. In this case, \".com\" is the TLD. There are different types of TLDs.\n\n4. During registration of a domain, the second level domain (SLD) is restricted to 63 characters plus the TLD, and can only use letters (a-z), numbers (0-9), and hyphens. It cannot start with or end with hyphens, and cannot have consecutive hyphens.\n\n5. A subdomain is on the left-hand side of the second level domain and uses a period to separate the two. For example, in admin.tryhackme.com, \"admin\" is the subdomain. The same creation restrictions as the second level domain apply to subdomains. You can use multiple subdomains split with periods to create longer names.\n\nAdditionally, here are some important points about record types:\n\n- A request is made, and the computer first checks if it is stored in the local cache. If not, a recursive DNS server (usually provided by the ISP) makes the request.\n- The root serves the TLD server, which then serves the authoritative DNS server that has the correct information about the domain.\n- There are several types of record types: A record, AAAA record, CNAME record, MX record, and TXT record. These records store different types of information about a domain.",
+  "embedding_file_path": "D:\\Users\\Yashu\\Projects\\divami\\internal_data\\internal-processed-docs\\embeddings\\DIVAMI_008_emb.npy"
+}

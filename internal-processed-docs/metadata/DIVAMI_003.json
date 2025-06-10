@@ -1,0 +1,13 @@
+{
+  "document_id": "DIVAMI_003",
+  "source_system": "GoogleDrive",
+  "original_filename": "Exercise2-StagingAndStashing.md",
+  "format": "MD",
+  "date_created": "",
+  "last_modified": "2020-12-23T06:03:58.000Z",
+  "date_received": "2025-06-10T06:47:48.716962Z",
+  "ingested_at": "2025-06-10T07:27:06.784064Z",
+  "status": "Processed",
+  "summary": "1. Clone the `advanced-git-exercises` repository from [github.com/nnja/advanced-git-exercises](https://github.com/nnja/advanced-git-exercises).\n  2. Checkout the `exercise2` tag to set things up for the following exercise.\n  3. Use `git ls-files -s` to view the contents of the staging area.\n  4. Make a change and try to stage it interactively (`git add -p`).\n  5. Use `git reset` to undo the staging of your file.\n  6. Stash your change with a unique stash message, then unstash and apply it back to the `exercise2` branch.\n  7. The change you want to stage is listed during the interactive staging process, where it says `+This is a test of the emergency git-casting system.`.\n  8. Use `git stash save` with a message; this helps you remember what's what if you stash multiple changes. Then use `git stash apply` to apply the change that was stashed.",
+  "embedding_file_path": "D:\\Users\\Yashu\\Projects\\divami\\internal_data\\internal-processed-docs\\embeddings\\DIVAMI_003_emb.npy"
+}

@@ -1,0 +1,13 @@
+{
+  "document_id": "DIVAMI_001",
+  "source_system": "GoogleDrive",
+  "original_filename": "UI_UX Project Scope Document.pdf",
+  "format": "PDF",
+  "date_created": "",
+  "last_modified": "2025-06-09T12:40:20.000Z",
+  "date_received": "2025-06-10T06:47:48.714478Z",
+  "ingested_at": "2025-06-10T07:11:36.666106Z",
+  "status": "Processed",
+  "summary": "1. The CampusConnect project is a mobile-first platform aimed at simplifying and enriching the daily lives of university students by consolidating academic schedules, club activities, events, and campus resources into a single intuitive interface.\n\n2. The primary goal of this UI/UX project is to deliver a seamless, accessible, and delightful user experience through thoughtful UI/UX design.\n\n3. The project deliverables include stakeholder interviews, user personas, journey maps, competitive analysis, low-fidelity wireframes, high-fidelity mockups, clickable prototypes, usability testing reports, UX heuristics review, design system, annotated UI screens, and developer handoff via Figma or Zeplin.\n\n4. The functional scope (UI focus) includes navigation structure, dashboard/home screen, club portal, calendar integration, notification center, profile settings, and micro-interactions.\n\n5. The UX scope (experience focus) includes user research, information architecture, accessibility standards, micro-interactions, onboarding flow, and success metrics such as task success rate, student engagement, reduction in onboarding time, and satisfaction score in post-launch feedback.",
+  "embedding_file_path": "D:\\Users\\Yashu\\Projects\\divami\\internal_data\\internal-processed-docs\\embeddings\\DIVAMI_001_emb.npy"
+}

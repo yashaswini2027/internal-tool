@@ -1,0 +1,13 @@
+{
+  "document_id": "DIVAMI_002",
+  "source_system": "GoogleDrive",
+  "original_filename": "Exercise1-SimpleCommit.md",
+  "format": "MD",
+  "date_created": "",
+  "last_modified": "2020-12-23T06:03:58.000Z",
+  "date_received": "2025-06-10T06:47:48.715780Z",
+  "ingested_at": "2025-06-10T07:30:44.964861Z",
+  "status": "Processed",
+  "summary": "1. In this exercise, we'll create a simple commit and inspect the objects stored in our `.git` folder to gain insight into how Git works.\n  2. To do this, create a new folder, initialize it as a git repo, create a file, stage it, and commit it to your new repo.\n  3. Look at your `.git` folder using the command `tree`.\n  4. Inspect the objects in your `.git/objects` folder using `git cat-file`. Find the tree, blob, and commit objects for your recent commit.\n  5. Look at your `.git/HEAD` and `.git/refs/heads/master` files to understand where these references are pointing.",
+  "embedding_file_path": "D:\\Users\\Yashu\\Projects\\divami\\internal_data\\internal-processed-docs\\embeddings\\DIVAMI_002_emb.npy"
+}

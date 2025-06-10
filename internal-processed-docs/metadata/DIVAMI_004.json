@@ -1,0 +1,13 @@
+{
+  "document_id": "DIVAMI_004",
+  "source_system": "GoogleDrive",
+  "original_filename": "InternalArticle.txt",
+  "format": "TXT",
+  "date_created": "",
+  "last_modified": "2025-06-03T11:37:16.000Z",
+  "date_received": "2025-06-10T06:47:48.718294Z",
+  "ingested_at": "2025-06-10T07:33:47.767847Z",
+  "status": "Processed",
+  "summary": "1. Modern NLP pipelines start with Named Entity Recognition (NER) and link the identified entities to a knowledge graph for easy retrieval of context.\n  2. Unsupervised keyword extraction methods help identify core themes in documents, ensuring consistency across tags.\n  3. Sentence-level embeddings are used for semantic search, mapping each document paragraph into a 384-dimensional space for quick retrieval.\n  4. The workflow architecture includes a Trend Monitor & Tagger that scrapes news APIs daily for technology headlines and stores the trend embeddings alongside internal doc embeddings for cross-referencing.\n  5. After draft generation, content flows through an editorial review process before being published on the WordPress site via a REST API.",
+  "embedding_file_path": "D:\\Users\\Yashu\\Projects\\divami\\internal_data\\internal-processed-docs\\embeddings\\DIVAMI_004_emb.npy"
+}
