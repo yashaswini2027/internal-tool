@@ -33,7 +33,7 @@ def list_files_in_folder(folder_id: str):
         resp = service.files().list(
             q=query,
             spaces="drive",
-            fields="nextPageToken, files(id, name, mimeType, modifiedTime)",
+            fields="nextPageToken, files(id, name, mimeType, modifiedTime, webViewLink)",
             pageToken=page_token
         ).execute()
         results.extend(resp.get("files", []))

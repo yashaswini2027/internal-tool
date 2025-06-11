@@ -1,122 +1,97 @@
 # pr_agent/core/summarizer.py
 
-import os
-import requests
+from dotenv import load_dotenv
+load_dotenv()   
+
 from tiktoken import encoding_for_model
-
-# from pr_agent.settings import (
-#     OLLAMA_BASE_URL,
-#     OLLAMA_MODEL_SHORT as MODEL,
-#     EMBED_TOKEN_MODEL,
-#     TOKEN_LIMIT,
-# )
-
+from pydantic_ai import Agent
+from pydantic_ai.providers.google_gla import GoogleGLAProvider
 from pr_agent.settings import settings
 
-ollama_base = settings.OLLAMA_BASE_URL
-model = settings.OLLAMA_MODEL_SHORT
-embed_token = settings.EMBED_TOKEN_MODEL
-tok_limit = settings.TOKEN_LIMIT
+# ─── Instantiate a single Gemini‐Flash agent ───────────────────────────────
+# (it will read your API key and model name from settings)
+agent = Agent(
+    settings.GEMINI_MODEL,            # e.g. "gemini-1.5-flash-latest"
+    provider=GoogleGLAProvider(api_key=settings.GEMINI_API_KEY),
+    system_prompt=(
+        "You are a summarization assistant. "
+        "Given a block of text, extract its most important sentences "
+        "and return a clear, concise summary."
+        "Remove any formatting characters like the newline character \n or ** and others."
+    ),
+    output_type=str,
+)
 
-
-def call_llama(model: str, messages=None, prompt: str = None, max_tokens: int = 256) -> str:
+def call_gemini(prompt: str, max_tokens: int) -> str:
     """
-    Send a chat or completion request to Ollama’s /v1 API.
+    Send `prompt` to Gemini-Flash and return the generated text.
     """
-    endpoint = (
-        f"{ollama_base}/chat/completions"
-        if messages
-        else f"{ollama_base}/completions"
-    )
-    payload = {
-        "model": model,
-        **({"messages": messages} if messages else {"prompt": prompt}),
-        "max_tokens": max_tokens,
-        "temperature": 0,
-    }
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer nokey"
-    }
-    resp = requests.post(endpoint, json=payload, headers=headers)
-    resp.raise_for_status()
-    data = resp.json()
-    if messages:
-        return data["choices"][0]["message"]["content"].strip()
-    return data["choices"][0]["text"].strip()
-
+    resp = agent.run_sync(prompt, max_output_tokens=max_tokens)
+    return resp.output.strip()
 
 def extract_summary(text: str) -> str:
     """
-    Create a 250–350 word summary of `text` using:
-      • <800 words → extract 5 sentences, optional truncate
-      • 800–2 000 → extract 8 sentences, optional compress
-      • >2 000 → chunk by ~500 words, extract 2 sentences/chunk, combine, compress
-    Finally ensure under TOKEN_LIMIT tokens.
+    Summarize `text` using a 3-branch strategy:
+      • < 800 words:    extract 5 sentences (then truncate if >300 words)
+      • 800–2000 words: extract 8 sentences (then truncate if >250 words)
+      • > 2000 words:   chunk into ~500-word pieces, extract 2 sentences each,
+                        concat and truncate if >300 words
+    Finally enforce an absolute token limit via one more Gemini call.
     """
     words = text.split()
     n = len(words)
 
-    # Branch 1: short document
+    # ─── Branch 1: short docs (<800 words) ───────────────────────────────
     if n < 800:
-        summary = call_llama(
-            model,
-            prompt=f"Extract the 5 most important sentences from the following text:\n\n{text}",
+        summary = call_gemini(
+            f"Extract the 5 most important sentences from the following text:\n\n{text}",
             max_tokens=512
         )
         if len(summary.split()) > 300:
-            summary = call_llama(
-                model,
-                prompt=f"Compress the following text into a concise 200–250 word summary:\n\n{summary}",
+            summary = call_gemini(
+                f"Compress the following text into a concise 200–250 word summary:\n\n{summary}",
                 max_tokens=300
             )
 
-    # Branch 2: mid-length document
+    # ─── Branch 2: mid-length docs (800–2000 words) ────────────────────────
     elif n <= 2000:
-        summary = call_llama(
-            model,
-            prompt=f"Extract the 8 most important sentences from the following text:\n\n{text}",
+        summary = call_gemini(
+            f"Extract the 8 most important sentences from the following text:\n\n{text}",
             max_tokens=512
         )
         if len(summary.split()) > 250:
-            summary = call_llama(
-                model,
-                prompt=f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
+            summary = call_gemini(
+                f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
                 max_tokens=300
             )
 
-    # Branch 3: long document
+    # ─── Branch 3: long docs (>2000 words) ────────────────────────────────
     else:
+        # break into ~500-word chunks
         chunks = [" ".join(words[i : i + 500]) for i in range(0, n, 500)]
         extracted = []
         for chunk in chunks:
             extracted.append(
-                call_llama(
-                    model,
-                    prompt=f"Extract the 2 most important sentences from the following text:\n\n{chunk}",
+                call_gemini(
+                    f"Extract the 2 most important sentences from the following text:\n\n{chunk}",
                     max_tokens=128
                 )
             )
         summary = " ".join(extracted)
         if len(summary.split()) > 300:
-            summary = call_llama(
-                model,
-                prompt=f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
+            summary = call_gemini(
+                f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
                 max_tokens=300
             )
 
-    # Final token-count check
-    enc = encoding_for_model(embed_token)
+    # ─── Final token-limit enforcement ──────────────────────────────────────
+    enc    = encoding_for_model(settings.EMBED_TOKEN_MODEL)
     tokens = len(enc.encode(summary))
-    if tokens > tok_limit:
-        summary = call_llama(
-            model,
-            prompt=(
-                f"Reduce the following summary to under {tok_limit} tokens. "
-                "Keep it coherent and informative:\n\n"
-                f"{summary}"
-            ),
-            max_tokens=tok_limit
+    if tokens > settings.TOKEN_LIMIT:
+        summary = call_gemini(
+            f"Reduce the following summary to under {settings.TOKEN_LIMIT} tokens. "
+            "Keep it coherent and informative:\n\n" + summary,
+            max_tokens=settings.TOKEN_LIMIT
         )
 
     return summary

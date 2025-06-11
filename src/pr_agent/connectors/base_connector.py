@@ -10,3 +10,4 @@ class SourceItem:
     raw_bytes: BytesIO    # In-memory bytes of the file, ready for text_extractor
     last_modified: str    # ISO8601 timestamp (if available), else blank
     source_system: str    # literal "GoogleDrive" or "Notion"
+    url: Optional[str] = None

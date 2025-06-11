@@ -58,7 +58,7 @@ def process_pending():
         existing = set()  # we just want to fetch this single item
         if source == "GoogleDrive":
             items = list_gdrive(existing, settings.GDRIVE_FOLDER_ID)
-            print("DEBUG: Drive connector returned these names:", [it.name for it in items])
+            #print("DEBUG: Drive connector returned these names:", [it.name for it in items])
             matches = [it for it in items if it.name == fname]
 
         else:  # source == "Notion"
@@ -80,7 +80,7 @@ def process_pending():
         # 3.b) Write raw text out as JSON in RAW_DIR
         raw_path = Path(settings.RAW_DIR)
         raw_path.mkdir(parents=True, exist_ok=True)
-        raw_json = raw_path / f"{doc_id}.json"
+        raw_json = raw_path / f"{doc_id}_raw.json"
         with open(raw_json, "w", encoding="utf-8") as rf:
             json.dump(
                 {"document_id": doc_id, "raw_text": raw_text},
@@ -103,24 +103,26 @@ def process_pending():
         # 5) Generate embedding over the summary (not raw text)
         vector   = generate_embedding(summary)
         #emb_path = save_embedding(vector, doc_id, str(settings.EMBEDDINGS_DIR))
-        # Push into Pinecone
-        upsert_embedding(
-            doc_id=doc_id,
-            vector=vector,
-            metadata={
-            "source": source,
-            "original_filename": fname,
-            #"ingested_at": ingest_ts
-            }
-        )
+        ingest_ts = datetime.utcnow().isoformat() + "Z"
         emb_path = f"PineconeIndex<{settings.PINECONE_INDEX}>/{doc_id}"
+        # Push into Pinecone
+        # upsert_embedding(
+        #     doc_id=doc_id,
+        #     vector=vector,
+        #     metadata={
+        #     "source": source,
+        #     "original_filename": fname,
+        #     #"ingested_at": ingest_ts
+        #     }
+        # )
+        #emb_path = f"PineconeIndex<{settings.PINECONE_INDEX}>/{doc_id}"
 
         # # 6) Flip status → “Processed” and set “Ingested At”
         # ingest_ts = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
         # mark_row(df, idx, {"Status": "Processed", "Ingested At": ingest_ts})
 
         # 6) Flip status → “Processed” and set “Ingested At”
-        ingest_ts = datetime.utcnow().isoformat() + "Z"
+        #ingest_ts = datetime.utcnow().isoformat() + "Z"
         meta.update({
             "Status":            "Processed",
             "Ingested At":       ingest_ts,
@@ -128,6 +130,12 @@ def process_pending():
             "Embedding File Path / ID": emb_path
         })
         store.upsert(doc_id, meta)
+
+        upsert_embedding(
+            doc_id=doc_id,
+            vector=vector,
+            metadata=meta
+        )
 
         # 10) Build JSON payload
         #     Coerce any NaN → "" first

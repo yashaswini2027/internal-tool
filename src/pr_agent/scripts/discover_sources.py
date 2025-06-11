@@ -53,6 +53,7 @@ def discover_sources():
             "Status":            "Pending",
             "Summary":           "",
             "Embedding File":    "",
+            "File URL":         item.url or "",
         }
 
         store.upsert(doc_id, metadata)

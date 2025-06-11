@@ -1,6 +1,7 @@
 # pr_agent/connectors/gdrive_connector.py
 
 from typing import List, Set
+from pr_agent.drive_client import get_drive_service, fetch_file_bytes
 from pr_agent.drive_client import list_files_in_folder, fetch_file_bytes
 from pr_agent.connectors.base_connector import SourceItem
 
@@ -37,22 +38,48 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
     """
     Now uses a recursive gather to find every file under root_folder_id (any depth).
     """
-    items: List[SourceItem] = []
+
+    #service = get_drive_service()
+
+    # Request webViewLink so we get the exact UI URL Drive shows
+    # results = service.files().list(
+    #     q=query,
+    #     pageSize=1000,
+    #     fields=(
+    #         "nextPageToken, "
+    #         "files(id, name, modifiedTime, mimeType, webViewLink)"
+    #     )
+    # ).execute()
 
     # 1) Recursively gather all file-metadata dicts under root_folder_id
     all_file_meta = _gather_all_files_recursively(root_folder_id)
 
-    for meta in all_file_meta:
-        file_id   = meta["id"]
-        filename  = meta["name"]
-        modified  = meta.get("modifiedTime", "")
+    items: List[SourceItem] = []
 
+    for meta in all_file_meta:
         file_id   = meta["id"]
         if file_id in existing_ids:
              continue
-
         filename  = meta["name"]
         modified  = meta.get("modifiedTime", "")
+        #mime_type = file.get("mimeType", "")
+        web_url    = meta.get("webViewLink")
+        if not web_url:
+            web_url = f"https://drive.google.com/file/d/{file_id}/view"
+
+        # Fallback for any odd cases where webViewLink is missing:
+        # if not web_url:
+        #     # Native Google Docs
+        #     if mime_type == "application/vnd.google-apps.document":
+        #         web_url = f"https://docs.google.com/document/d/{file_id}/edit"
+        #     # Google Sheets
+        #     elif mime_type == "application/vnd.google-apps.spreadsheet":
+        #         web_url = f"https://docs.google.com/spreadsheets/d/{file_id}/edit"
+        #     # All other binaries
+        #     else:
+        #         web_url = f"https://drive.google.com/file/d/{file_id}/view"
+
+
 
         # 3) Download the file’s bytes
         buffer = fetch_file_bytes(file_id)  # BytesIO
@@ -63,7 +90,8 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
             name=filename,
             raw_bytes=buffer,
             last_modified=modified,
-            source_system="GoogleDrive"
+            source_system="GoogleDrive",
+            url=web_url
         )
         items.append(item)
 

@@ -61,7 +61,7 @@ def process_leaf_page(page_id: str) -> List[SourceItem]:
                 raw_bytes = download_file(url)
                 buf = io.BytesIO(raw_bytes)
                 filename = url.split("/")[-1].split("?")[0]
-                attachments.append((filename, buf))
+                attachments.append((filename, buf, url))
 
         # File attachment (PDF, etc.)
         elif btype == "file":
@@ -72,7 +72,7 @@ def process_leaf_page(page_id: str) -> List[SourceItem]:
                 buf = io.BytesIO(raw_bytes)
                 # Notion sometimes supplies a “name” field under file_obj
                 filename = file_obj.get("name", f"file_{block['id']}")
-                attachments.append((filename, buf))
+                attachments.append((filename, buf, url))
 
         else:
             # Skip child_page or child_database here because this function
@@ -89,6 +89,7 @@ def process_leaf_page(page_id: str) -> List[SourceItem]:
                 raw_bytes=buffer,
                 last_modified=last_edited,
                 source_system="Notion",
+                url=file_url
             )
         )
 
@@ -98,6 +99,7 @@ def process_leaf_page(page_id: str) -> List[SourceItem]:
         buffer = io.BytesIO(full_text.encode("utf-8"))
         txt_filename = f"{page_title.replace(' ', '_')}.txt"
         item_id = f"{page_id}:{txt_filename}"
+        page_url = page_json.get("url") or f"https://www.notion.so/{page_id}"
         items.append(
             SourceItem(
                 id=item_id,
@@ -105,6 +107,7 @@ def process_leaf_page(page_id: str) -> List[SourceItem]:
                 raw_bytes=buffer,
                 last_modified=last_edited,
                 source_system="Notion",
+                url=page_url
             )
         )
 

@@ -60,13 +60,21 @@ class Settings(BaseSettings):
         description="Name of your Pinecone index"
     )
 
-
+# ─── Gemini (Google Generative AI) settings ─────────────────────────────
+    GEMINI_API_KEY: str = Field(
+        ..., env="GEMINI_API_KEY",
+        description="Your Google Generative AI API key for Gemini models"
+    )
+    GEMINI_MODEL:   str = Field(
+        "gemini-1.5-flash-latest", env="GEMINI_MODEL",
+        description="Name of the Gemini model to use"
+    )
 
     # ─── General settings ────────────────────────────────────────────────────
     GDRIVE_SCOPES: ClassVar[list[str]] = ["https://www.googleapis.com/auth/drive.readonly"]
     EMBEDDING_MODEL: ClassVar[list[str]] = "all-MiniLM-L6-v2"
-    OLLAMA_BASE_URL: ClassVar[list[str]] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
-    OLLAMA_MODEL_SHORT: ClassVar[list[str]] = os.getenv("OLLAMA_MODEL_SHORT", "mistral")
+    # OLLAMA_BASE_URL: ClassVar[list[str]] = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+    # OLLAMA_MODEL_SHORT: ClassVar[list[str]] = os.getenv("OLLAMA_MODEL_SHORT", "mistral")
     EMBED_TOKEN_MODEL: ClassVar[list[str]] = os.getenv("EMBED_TOKEN_MODEL", "text-embedding-ada-002")
     TOKEN_LIMIT: ClassVar[list[str]] = int(os.getenv("TOKEN_LIMIT", "550"))
     TOP_TOPIC_COUNT: ClassVar[list[str]] = 3

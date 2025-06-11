@@ -31,7 +31,8 @@ def build_json_payload(metadata_row: dict,
         "ingested_at":        metadata_row.get("Ingested At", ""),
         "status":             metadata_row.get("Status", ""),
         "summary":            summary,
-        "embedding_file_path": embedding_path
+        "embedding_file_path": embedding_path,
+        "file_url":            metadata_row.get("File URL", "")
     }
 
 def write_json_file(payload: dict, doc_id: str, output_dir: str) -> str:
