@@ -8,6 +8,7 @@ from pydantic_ai import Agent
 from pydantic_ai.providers.google_gla import GoogleGLAProvider
 from pr_agent.settings import settings
 
+#gemini_key = os.environ["GEMINI_API_KEY"]
 # ─── Instantiate a single Gemini‐Flash agent ───────────────────────────────
 # (it will read your API key and model name from settings)
 agent = Agent(
