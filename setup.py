@@ -9,7 +9,7 @@ long_description = '' # (this_dir / "README.md").read_text(encoding="utf-8")
 
 setuptools.setup(
     name="internal-tool",                      # how users will install it
-    version="0.1.4",
+    version="0.1.6",
     author="yashaswini",
     author_email="goyashu@gmail.com",
     description="A Python agent for discovering and processing documents from Google Drive and Notion.",
@@ -37,12 +37,14 @@ setuptools.setup(
         "pydantic-settings",
         "tiktoken",
         "transformers",
-        "torch"
+        "torch",
+        "pinecone"
     ],
     entry_points={
         "console_scripts": [
-            "pr-agent-discover=pr_agent.scripts.discover_sources:main",
-            "pr-agent-process=pr_agent.scripts.process_pending:main",
+            "internal-discover=pr_agent.scripts.discover_sources:main",
+            "internal-process=pr_agent.scripts.process_pending:main",
+            "pinecone-setup=pr_agent.scripts.create_pinecone_index:main",
         ]
     },
     classifiers=[

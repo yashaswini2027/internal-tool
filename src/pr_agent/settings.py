@@ -9,14 +9,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 class Settings(BaseSettings):
 
-    #BASE_DIR: Path = Path(__file__).resolve().parent.parent
-
     METADATA_DIR: Path = Field(
         default=BASE_DIR / "internal-processed-docs" / "metadata",
         description="Where per-doc metadata JSONs live",
     )
-
-    #METADATA_DIR: Path   = BASE_DIR / "internal-processed-docs" / "metadata"
     
     RAW_DIR: Path = Field(
         default=BASE_DIR / "internal-processed-docs" / "raw",
@@ -27,9 +23,6 @@ class Settings(BaseSettings):
         default=BASE_DIR / "internal-processed-docs" / "embeddings",
         description="Where .npy embeddings are stored",
     )
-
-    #RAW_DIR: Path        = BASE_DIR / "internal-processed-docs" / "raw"
-    #EMBEDDINGS_DIR: Path = BASE_DIR / "internal-processed-docs" / "embeddings"
 
     # ─── Google Drive settings ──────────────────────────────────────────────
     GDRIVE_CRED_FILE: Path = Field(
@@ -50,11 +43,24 @@ class Settings(BaseSettings):
         ...,
         description="Root page ID in Notion to crawl",
     )
-    # Secrets & IDs — no defaults here, so user *must* supply them
-    # GDRIVE_CRED_FILE: Path
-    # GDRIVE_FOLDER_ID: str
-    # NOTION_TOKEN: str
-    # NOTION_ROOT_PAGE_ID: str
+
+    # ─── Pinecone settings ────────────────────────────────────────────────────
+    PINECONE_API_KEY: str = Field(
+        ..., env="PINECONE_API_KEY",
+        description="Your Pinecone API key"
+    )
+
+    PINECONE_ENV: str = Field(
+        ..., env="PINECONE_ENV",
+        description="Your Pinecone environment"
+    )
+
+    PINECONE_INDEX: str = Field(
+        "halo-embeds", env="PINECONE_INDEX",
+        description="Name of your Pinecone index"
+    )
+
+
 
     # ─── General settings ────────────────────────────────────────────────────
     GDRIVE_SCOPES: ClassVar[list[str]] = ["https://www.googleapis.com/auth/drive.readonly"]

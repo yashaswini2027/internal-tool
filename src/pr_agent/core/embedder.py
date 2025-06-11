@@ -28,13 +28,9 @@ def generate_embedding(text: str) -> list[float]:
     if not text:
         return []
 
-    # Obtain the concise summary first
-    summary_text = extract_summary(text)
-    if not summary_text:
-        return []
 
     model = _get_model()
-    vec = model.encode([summary_text], show_progress_bar=False)[0]
+    vec = model.encode([text], show_progress_bar=False)[0]
     return vec.tolist()
 
 def save_embedding(vector: list[float], doc_id: str, output_dir: str) -> str:

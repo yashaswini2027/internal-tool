@@ -10,7 +10,9 @@ from pr_agent.core.metadata_manager import DirectoryMetadataStore
 #from pr_agent.core.metadata_manager import load_metadata, mark_row
 from pr_agent.core.text_extractor import extract_text
 from pr_agent.core.summarizer import extract_summary
-from pr_agent.core.embedder import generate_embedding, save_embedding
+#from pr_agent.core.embedder import generate_embedding, save_embedding
+from pr_agent.core.embedder import generate_embedding
+from pr_agent.core.pinecone_manager import upsert_embedding
 from pr_agent.core.json_writer import build_json_payload, write_json_file
 # from pr_agent.settings import METADATA_DIR, EMBEDDINGS_DIR, RAW_DIR
 # from pr_agent.settings import GDRIVE_FOLDER_ID
@@ -99,8 +101,19 @@ def process_pending():
         summary = extract_summary(raw_text)
 
         # 5) Generate embedding over the summary (not raw text)
-        vector   = generate_embedding(raw_text)
-        emb_path = save_embedding(vector, doc_id, str(settings.EMBEDDINGS_DIR))
+        vector   = generate_embedding(summary)
+        #emb_path = save_embedding(vector, doc_id, str(settings.EMBEDDINGS_DIR))
+        # Push into Pinecone
+        upsert_embedding(
+            doc_id=doc_id,
+            vector=vector,
+            metadata={
+            "source": source,
+            "original_filename": fname,
+            #"ingested_at": ingest_ts
+            }
+        )
+        emb_path = f"PineconeIndex<{settings.PINECONE_INDEX}>/{doc_id}"
 
         # # 6) Flip status → “Processed” and set “Ingested At”
         # ingest_ts = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
@@ -111,7 +124,7 @@ def process_pending():
         meta.update({
             "Status":            "Processed",
             "Ingested At":       ingest_ts,
-            "Summary":           extract_summary(raw_text),
+            "Summary":           summary,
             "Embedding File Path / ID": emb_path
         })
         store.upsert(doc_id, meta)
