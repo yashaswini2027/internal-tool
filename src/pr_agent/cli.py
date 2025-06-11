@@ -14,7 +14,7 @@ def list_docs():
     store = DirectoryMetadataStore(settings.METADATA_DIR)
     for doc_id in sorted(store.get_all_ids()):
         meta = store.read(doc_id)
-        typer.echo(f"{doc_id}  →  {meta.get('Original Filename')}")
+        typer.echo(f"{doc_id}  →  {meta.get('original_filename')}")
 
 @app.command("show-url")
 def show_url(doc_id: str):
@@ -23,7 +23,7 @@ def show_url(doc_id: str):
     """
     store = DirectoryMetadataStore(settings.METADATA_DIR)
     meta = store.read(doc_id)
-    url = meta.get("Original File URL")
+    url = meta.get("file_url")
     if not url:
         typer.secho(f"[!] No URL found for {doc_id}", fg=typer.colors.RED)
         raise typer.Exit(code=1)
