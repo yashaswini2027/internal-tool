@@ -1,9 +1,11 @@
 # pr_agent/connectors/gdrive_connector.py
 
 from typing import List, Set
-from pr_agent.drive_client import get_drive_service, fetch_file_bytes
-from pr_agent.drive_client import list_files_in_folder, fetch_file_bytes
+from pr_agent.drive_client import get_drive_service
+from pr_agent.drive_client import list_files_in_folder
 from pr_agent.connectors.base_connector import SourceItem
+from pr_agent.drive_client import get_drive_service, list_files_in_folder
+from pr_agent.drive_client import download_file_bytes
 
 def _gather_all_files_recursively(folder_id: str) -> List[dict]:
     """
@@ -60,9 +62,12 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
         file_id   = meta["id"]
         if file_id in existing_ids:
              continue
-        filename  = meta["name"]
-        modified  = meta.get("modifiedTime", "")
         mime_type = meta.get("mimeType", "")
+        filename  = meta["name"]
+        # if this was a Google-Doc, we just grabbed it as PDF:
+        if mime_type == "application/vnd.google-apps.document":
+            filename += ".pdf"
+        modified  = meta.get("modifiedTime", "")
         web_url    = meta.get("webViewLink")
         if not web_url:
             web_url = f"https://drive.google.com/file/d/{file_id}/view"
@@ -82,7 +87,10 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
 
 
         # 3) Download the file’s bytes
-        buffer = fetch_file_bytes(file_id)  # BytesIO
+        #buffer = fetch_file_bytes(file_id)  # BytesIO
+
+        # 3) Download the file’s bytes (exports Google-native if needed)
+        buffer = download_file_bytes(file_id, mime_type)
 
         # 4) Wrap into a SourceItem
         item = SourceItem(

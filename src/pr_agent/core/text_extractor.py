@@ -2,6 +2,7 @@
 
 import os
 import pandas as pd
+import pypandoc
 from pr_agent.drive_client import fetch_file_bytes  # used only if you want to re-fetch, but optional
 
 def extract_text(source_item) -> str:
@@ -16,6 +17,15 @@ def extract_text(source_item) -> str:
 
     if ext in [".txt", ".md"]:
         return buffer.read().decode("utf-8", errors="ignore")
+    
+    elif ext == ".doc":
+        import pypandoc
+        try:
+            raw = buffer.read()
+            return pypandoc.convert_text(raw, to="plain", format="doc")
+        except Exception:
+            return ""
+
 
     elif ext == ".docx":
         from docx import Document

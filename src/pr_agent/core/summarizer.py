@@ -13,6 +13,7 @@ from pr_agent.settings import settings
 #gemini_key = os.environ["GEMINI_API_KEY"]
 # ─── Instantiate a single Gemini‐Flash agent ───────────────────────────────
 # (it will read your API key and model name from settings)
+
 agent = Agent(
     settings.GEMINI_MODEL,            # e.g. "gemini-1.5-flash-latest"
     provider=GoogleGLAProvider(api_key=settings.GEMINI_API_KEY),
