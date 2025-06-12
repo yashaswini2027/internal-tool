@@ -62,7 +62,7 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
              continue
         filename  = meta["name"]
         modified  = meta.get("modifiedTime", "")
-        #mime_type = file.get("mimeType", "")
+        mime_type = meta.get("mimeType", "")
         web_url    = meta.get("webViewLink")
         if not web_url:
             web_url = f"https://drive.google.com/file/d/{file_id}/view"
@@ -91,7 +91,8 @@ def list_new_items(existing_ids: Set[str], root_folder_id: str) -> List[SourceIt
             raw_bytes=buffer,
             last_modified=modified,
             source_system="GoogleDrive",
-            url=web_url
+            url=web_url,
+            mime_type=mime_type
         )
         items.append(item)
 

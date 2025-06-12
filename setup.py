@@ -48,8 +48,9 @@ setuptools.setup(
             "internal-process=pr_agent.scripts.process_pending:main",
             "pinecone-setup=pr_agent.scripts.create_pinecone_index:main",
             "pr-agent=pr_agent.cli:app",
-            "list-docs=pr_agent.cli:list_docs",
-            "show-url=pr_agent.cli:show_url",
+            "list-docs=pr_agent.cli:cli_list_docs",
+            "show-url=pr_agent.cli:cli_show_url",
+            "download=pr_agent.cli:download"
         ]
     },
     classifiers=[

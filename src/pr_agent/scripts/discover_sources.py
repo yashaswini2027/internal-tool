@@ -54,6 +54,7 @@ def discover_sources():
             "Summary":           "",
             "Embedding File":    "",
             "File URL":         item.url or "",
+            "MIME Type":         item.mime_type or "",
         }
 
         store.upsert(doc_id, metadata)

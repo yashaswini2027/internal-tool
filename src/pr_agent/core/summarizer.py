@@ -3,9 +3,11 @@
 from dotenv import load_dotenv
 load_dotenv()   
 
+import time
 from tiktoken import encoding_for_model
 from pydantic_ai import Agent
 from pydantic_ai.providers.google_gla import GoogleGLAProvider
+from pydantic_ai.exceptions import ModelHTTPError
 from pr_agent.settings import settings
 
 #gemini_key = os.environ["GEMINI_API_KEY"]
@@ -23,12 +25,32 @@ agent = Agent(
     output_type=str,
 )
 
+# def call_gemini(prompt: str, max_tokens: int) -> str:
+#     """
+#     Send `prompt` to Gemini-Flash and return the generated text.
+#     """
+#     resp = agent.run_sync(prompt, max_output_tokens=max_tokens)
+#     return resp.output.strip()
+
 def call_gemini(prompt: str, max_tokens: int) -> str:
     """
-    Send `prompt` to Gemini-Flash and return the generated text.
+    Send `prompt` to Gemini-Flash and return the generated text,
+    retrying up to 3 times on HTTP 503 errors.
     """
-    resp = agent.run_sync(prompt, max_output_tokens=max_tokens)
-    return resp.output.strip()
+    max_retries = 3
+    delay = 1
+    for attempt in range(max_retries):
+        try:
+            resp = agent.run_sync(prompt, max_output_tokens=max_tokens)
+            return resp.output.strip()
+        except ModelHTTPError as e:
+            # retry on transient “503 Service Unavailable”
+            if getattr(e, "status_code", None) == 503 and attempt < max_retries - 1:
+                time.sleep(delay)
+                delay *= 2
+                continue
+            raise
+
 
 def extract_summary(text: str) -> str:
     """

@@ -56,3 +56,47 @@ def fetch_file_bytes(file_id: str):
         status, done = downloader.next_chunk()
     buffer.seek(0)
     return buffer
+
+def download_file_bytes(file_id: str, mime_type: str) -> io.BytesIO:
+    """
+    Smart download:
+      • For native Google Docs/Sheets/Slides, exports as PDF.
+      • Otherwise streams the raw file bytes.
+    """
+    service = get_drive_service()
+
+    # Decide whether to export as PDF (native Google file)
+    # if "docs.google.com/document" in url \
+    # or "spreadsheets/d/"      in url \
+    # or "presentation/d/"      in url:
+    #     # Export to PDF
+    #     request = service.files().export_media(
+    #         fileId=file_id,
+    #         mimeType="application/pdf"
+    #     )
+    # else:
+    #     # Binary or other files
+    #     request = service.files().get_media(fileId=file_id)
+
+    # Determine by the stored mime_type, not by URL
+    #from pr_agent.settings import settings
+    # We assume `url` came from metadata, but actually branch on mime_type:
+    #mime_type = settings  # placeholder
+    # Instead of URL-based logic, branch on actual MIME Type:
+    # (lift mime_type from metadata in the CLI caller)
+    # e.g. in your CLI: download_file_bytes(file_id, meta["mime_type"])
+    if mime_type and mime_type.startswith("application/vnd.google-apps"):
+        request = service.files().export_media(
+            fileId=file_id,
+            mimeType="application/pdf"
+        )
+    else:
+        request = service.files().get_media(fileId=file_id)
+
+    buffer = io.BytesIO()
+    downloader = MediaIoBaseDownload(buffer, request)
+    done = False
+    while not done:
+        status, done = downloader.next_chunk()
+    buffer.seek(0)
+    return buffer

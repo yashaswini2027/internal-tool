@@ -24,6 +24,13 @@ class Settings(BaseSettings):
         description="Where .npy embeddings are stored",
     )
 
+    # ─── Download directory ────────────────────────────────────────────────
+    DOWNLOAD_DIR: Path = Field(
+        default=Path.home() / "Downloads",
+        env="DOWNLOAD_DIR",
+        description="Default directory where downloaded files are saved"
+    )
+
     # ─── Google Drive settings ──────────────────────────────────────────────
     GDRIVE_CRED_FILE: Path = Field(
         ...,

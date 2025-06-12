@@ -11,3 +11,4 @@ class SourceItem:
     last_modified: str    # ISO8601 timestamp (if available), else blank
     source_system: str    # literal "GoogleDrive" or "Notion"
     url: Optional[str] = None
+    mime_type: Optional[str] = None

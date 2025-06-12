@@ -21,6 +21,7 @@ def build_json_payload(metadata_row: dict,
       - embedding_file_path
     """
     return {
+        "source_id":          metadata_row.get("source_id",""),
         "document_id":        metadata_row.get("Document ID", ""),
         "source_system":      metadata_row.get("Source System", ""),
         "original_filename":  metadata_row.get("Original Filename", ""),
@@ -32,7 +33,8 @@ def build_json_payload(metadata_row: dict,
         "status":             metadata_row.get("Status", ""),
         "summary":            summary,
         "embedding_file_path": embedding_path,
-        "file_url":            metadata_row.get("File URL", "")
+        "file_url":            metadata_row.get("File URL", ""),
+        "mime_type":            metadata_row.get("MIME Type", ""),
     }
 
 def write_json_file(payload: dict, doc_id: str, output_dir: str) -> str:
