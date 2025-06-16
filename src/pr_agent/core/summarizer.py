@@ -92,21 +92,44 @@ def extract_summary(text: str) -> str:
     # ─── Branch 3: long docs (>2000 words) ────────────────────────────────
     else:
         # break into ~500-word chunks
-        chunks = [" ".join(words[i : i + 500]) for i in range(0, n, 500)]
+        # chunks = [" ".join(words[i : i + 500]) for i in range(0, n, 500)]
+        # extracted = []
+        # for chunk in chunks:
+        #     extracted.append(
+        #         call_gemini(
+        #             f"Extract the 2 most important sentences from the following text:\n\n{chunk}",
+        #             max_tokens=128
+        #         )
+        #     )
+        # summary = " ".join(extracted)
+        # if len(summary.split()) > 300:
+        #     summary = call_gemini(
+        #         f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
+        #         max_tokens=300
+        #     )
+
+        # increase chunk size to reduce calls
+        chunks = [" ".join(words[i : i + 1000]) for i in range(0, n, 1000)]
+
         extracted = []
         for chunk in chunks:
-            extracted.append(
-                call_gemini(
-                    f"Extract the 2 most important sentences from the following text:\n\n{chunk}",
-                    max_tokens=128
-                )
+            response = call_gemini(
+                f"Extract the 3 most important sentences from the following text:\n\n{chunk}",
+                max_tokens=150
             )
+            extracted.append(response)
+            time.sleep(4.5)
+        
         summary = " ".join(extracted)
         if len(summary.split()) > 300:
             summary = call_gemini(
                 f"Rewrite the following into a concise 200–250 word summary:\n\n{summary}",
                 max_tokens=300
             )
+
+
+
+
 
     # ─── Final token-limit enforcement ──────────────────────────────────────
     enc    = encoding_for_model(settings.EMBED_TOKEN_MODEL)

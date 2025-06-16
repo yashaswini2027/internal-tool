@@ -53,7 +53,7 @@ def process_pending():
         #    we actually stored NOTHING in the sheet except IDs.
         #    → So we need to re-invoke the correct connector to get bytes:
         from pr_agent.connectors.gdrive_connector import list_new_items as list_gdrive
-        from pr_agent.connectors.notion_connector import list_new_items as list_notion
+        #from pr_agent.connectors.notion_connector import list_new_items as list_notion
 
         existing = set()  # we just want to fetch this single item
         if source == "GoogleDrive":

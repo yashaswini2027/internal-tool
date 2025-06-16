@@ -24,10 +24,10 @@ def discover_sources():
 
     # 3) Ask each connector for new items
     drive_items  = list_drive_items(existing_source_ids, settings.GDRIVE_FOLDER_ID)
-    notion_items = list_notion_items(existing_source_ids)
+    #notion_items = list_notion_items(existing_source_ids)
 
     new_items = []
-    for item in drive_items + notion_items:
+    for item in drive_items: #+ notion_items:
         # 4a) Skip anything whose connector-ID we already saw
         if item.id in existing_source_ids:
             continue
