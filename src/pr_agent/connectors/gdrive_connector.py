@@ -18,6 +18,16 @@ def _gather_all_files_recursively(folder_id: str) -> List[dict]:
     results = list_files_in_folder(folder_id)
     #print(f"\nContents of folder {folder_id}:") # <- debug
 
+    allowed_mime_types = [
+    "application/vnd.google-apps.document",  # Google Docs
+    "application/pdf",                       # PDFs
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", # DOCX
+    "text/plain" # TXT
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", # XLSX
+    "text/csv",
+    "text/markdown"
+    ]
+
     for meta in results:
         #print("  •", meta["name"], "→", meta["mimeType"])  # <— debug
         file_id   = meta["id"]
@@ -31,7 +41,9 @@ def _gather_all_files_recursively(folder_id: str) -> List[dict]:
             all_files.extend(nested)
         else:
             # It’s a normal file (PDF, DOCX, TXT, etc.)
-            all_files.append(meta)
+            if mime_type in allowed_mime_types:
+                all_files.append(meta)
+
 
     return all_files
 

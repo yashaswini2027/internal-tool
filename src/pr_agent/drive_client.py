@@ -28,20 +28,8 @@ def list_files_in_folder(folder_id: str):
     service = get_drive_service()
     results = []
     page_token = None
-    allowed_mime_types = [
-    "application/vnd.google-apps.document",  # Google Docs
-    "application/pdf",                       # PDFs
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document", # DOCX
-    "text/plain" # TXT
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", # XLSX
-    "text/csv",
-    "text/markdown"
-    ]
 
-    mime_filters = " or ".join([f"mimeType = '{mime}'" for mime in allowed_mime_types])
-    query = f"('{folder_id}' in parents) and trashed = false and ({mime_filters})"
-
-    # query = f"'{folder_id}' in parents and trashed = false"
+    query = f"'{folder_id}' in parents and trashed = false"
     while True:
         resp = service.files().list(
             q=query,
